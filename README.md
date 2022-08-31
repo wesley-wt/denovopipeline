@@ -62,7 +62,7 @@ END IONS
 Another reformatting operation is necessary, because certain tools ignore the old indexing and do not work with predefined
 IDs. Spectrum indices and scan IDs are changed to integers from 1 to N. Information on old IDs is preserved in the TITLE line.
 
-`python main.py reformatMGF --input YOURDATA.mgf --output YOURDATA_reformatted.mgf`
+`python src/main.py reformatMGF --input YOURDATA.mgf --output YOURDATA_reformatted.mgf`
 
 This will produce two .mgf files. One called YOURDATA_reformatted_deepnovo.mgf for DeepNovo and PointNovo and another one called YOURDATA_reformatted.mgf for all other tools. The file for DeepNovo includes the 'SEQ=' line, which is necessary for DeepNovo to run.
 
