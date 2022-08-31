@@ -12,9 +12,8 @@ job*
 *ckpt*
 *.log
 *.sh
-*.pyc
+resources/**
 
-src/__pycache__/
 resources/SMSNet/smsnet_phospho/
 resources/DeepNovo
 resources/DeepNovo_Antibody/train.doremon.resolution_50.epoch_20.da_4500.ab.training.mouse
