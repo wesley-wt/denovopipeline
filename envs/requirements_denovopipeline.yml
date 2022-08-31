@@ -47,4 +47,3 @@ dependencies:
     - six==1.16.0
     - sklearn==0.0
     - threadpoolctl==3.1.0
-prefix: /scratch/beslicd/.conda/envs/denovopipeline

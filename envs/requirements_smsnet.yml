@@ -59,4 +59,3 @@ dependencies:
     - tokenize-rt==3.2.0
     - werkzeug==1.0.1
     - zipp==1.2.0
-prefix: /scratch/beslicd/.conda/envs/smsnet

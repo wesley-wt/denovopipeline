@@ -48,4 +48,3 @@ dependencies:
     - sklearn==0.0
     - threadpoolctl==3.1.0
     - torch==1.5.0
-prefix: /scratch/beslicd/.conda/envs/pointnovo
