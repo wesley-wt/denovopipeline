@@ -11,6 +11,8 @@
 job*
 *ckpt*
 *.log
+*.sh
+*.pyc
 
 src/__pycache__/
 resources/SMSNet/smsnet_phospho/
