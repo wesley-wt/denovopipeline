@@ -8,7 +8,7 @@ import logging
 import subprocess
 import shlex
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) 
 
 def log_subprocess_output(pipe):
     for line in iter(pipe.readline, b''): # b'\n'-separated lines

@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from sklearn import metrics
 from fast_diff_match_patch import diff
 import logging
-from collections import Counter
+from collections import Counter 
 
 from config import vocab, _match_AA_novor, arePermutation, tools_list
 

@@ -6,7 +6,7 @@ import pandas as pd
 import statistics
 import math
 import logging
-import os
+import os 
 
 from pyteomics import mgf, mass
 from config import vocab_reverse_nomods, mass_AA, mass_tol
