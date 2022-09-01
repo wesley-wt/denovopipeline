@@ -2,7 +2,6 @@ import csv
 import re
 import logging
 import logging.config
-import os
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +94,6 @@ def reformat_MGF(mgf_in):
                     new_scan += 1
             else:
                 ms2_peak_lines.append(line)
-    logger.info(f"Reformatted file can be found in {os.path.abspath(mgf_out)}")
     return
 
 
