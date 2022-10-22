@@ -523,9 +523,8 @@ def process_casanovo(casanovo_path):
             casanovo_df = casanovo_df.set_index('PSM_ID')
             casanovo_df.index += 1 
             casanovo_peptide = casanovo_df['sequence'].tolist()
-            casanovo_df['Casanovo Peptide'] = [i.replace('M(+15.99)', 'm').replace('Q(+.98)', 'q').replace('N(+.98)', 'n').replace(' ',
+            casanovo_df['Casanovo Peptide'] = [str(i).replace('M(+15.99)', 'm').replace('Q(+.98)', 'q').replace('N(+.98)', 'n').replace(' ',
                                         '').replace('C(+57.02)', 'C') for i in casanovo_peptide]
-            # TODO: Calculate Casanovo Score from AA score instead of using search_enginge score 
             casanovo_df['Casanovo Score'] = casanovo_df['search_engine_score[1]']
             casanovo_df['Casanovo Score'] = [i * 100 for i in casanovo_df['Casanovo Score'].tolist()]
             casanovo_aascore = casanovo_df['opt_ms_run[1]_aa_scores'].tolist()

@@ -121,8 +121,16 @@ def run_pointnovo(mgf_in, dir_out, pointnovo_model):
     logger.info(f"Sequencing with PointNovo finished. Total time: {minute} minutes and {sec} seconds.")
 
 
-def denovo_seq(mgf_in, resultdir, denovogui, smsnet, deepnovo, pnovo3, pointnovo, params, smsnet_model, deepnovo_model,
-               pointnovo_model):
+def run_casanovo(mgf_in, dir_out, casanovo_model):
+    start_time1 = time()
+    os.system(f"casanovo --mode=denovo --model={casanovo_model} --peak_path={mgf_in} --config=resources/Casanovo/casanovo_config.yaml --output={dir_out}")
+    casanovo_time = time() - start_time1
+    minute = int(casanovo_time // 60)
+    sec = round(casanovo_time - minute * 60, 1)
+    logger.info(f"Sequencing with Casanovo finished. Total time: {minute} minutes and {sec} seconds.")
+
+def denovo_seq(mgf_in, resultdir, denovogui, smsnet, deepnovo, pnovo3, pointnovo, casanovo, params, smsnet_model, deepnovo_model,
+               pointnovo_model, casanovo_model):
     logger.info("Function denovo_seq was called.")
 
     if denovogui == 1:
@@ -136,6 +144,9 @@ def denovo_seq(mgf_in, resultdir, denovogui, smsnet, deepnovo, pnovo3, pointnovo
 
     if pointnovo == 1:
         run_pointnovo(mgf_in, resultdir, pointnovo_model)
+
+    if casanovo == 1:
+        run_casanovo(mgf_in, resultdir, casanovo_model)
 
     if pnovo3 == 1:
         logger.info("pNovo 3 is not part of the pipeline and needs to be executed separately.")

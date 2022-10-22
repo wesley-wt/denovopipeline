@@ -63,6 +63,13 @@ def setup(test_argv=None):
         help="Turn PointNovo sequencing on or off. 1: on, 0: off, default " "is 0",
     )
     denovosequencing_parser.add_argument(
+        "--casanovo",
+        nargs="?",
+        const=0,
+        type=int,
+        help="Turn Casanovo sequencing on or off. 1: on, 0: off, default " "is 0",
+    )
+    denovosequencing_parser.add_argument(
         "--params",
         default="resources/DeNovoGUI-1.16.6/newparameter.par",
         type=str,
@@ -88,6 +95,12 @@ def setup(test_argv=None):
         default="train",
         type=str,
         help="Location of Model for PointNovo. Default: train/",
+    )
+    denovosequencing_parser.add_argument(
+        "--casanovo_model",
+        default="train",
+        type=str,
+        help="Location of Model for Casanovo. Default: train/",
     )
     setupdenovo_parser = subparsers.add_parser(
         "setup", help="Downloads knapsack, pre-trained models and test data"
