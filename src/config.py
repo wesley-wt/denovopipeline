@@ -11,6 +11,7 @@ tools_list = [
     "DeepNovo",
     "SMSNet",
     "PointNovo",
+    "Casanovo"
 ]
 
 _PAD = "_PAD"

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: future_fstrings -*-
 
 import user_args
