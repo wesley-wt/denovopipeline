@@ -1,6 +1,6 @@
 # denovopipeline
 
-denovopipeline uses multiple de novo sequencing algorithms ([pNovo3](http://pfind.ict.ac.cn/software/pNovo/index.html), [SMSNet](https://github.com/cmb-chula/SMSNet/tree/master#readme), [Novor](https://github.com/compomics/denovogui), [DeepNovo](https://github.com/nh2tran/DeepNovo), [PointNovo](https://github.com/volpato30/PointNovo), [ALPS](https://github.com/nh2tran/DeepNovo/blob/PNAS/Antibody/ALPS.jar)) for identification and assembly of peptide sequences by tandem mass spectrometry.
+denovopipeline uses multiple de novo sequencing algorithms ([pNovo3](http://pfind.ict.ac.cn/software/pNovo/index.html), [SMSNet](https://github.com/cmb-chula/SMSNet/tree/master#readme), [Novor](https://github.com/compomics/denovogui), [DeepNovo](https://github.com/nh2tran/DeepNovo), [PointNovo](https://github.com/volpato30/PointNovo), [Casanovo](https://github.com/Noble-Lab/casanovo), [ALPS](https://github.com/nh2tran/DeepNovo/blob/PNAS/Antibody/ALPS.jar)) for identification and assembly of peptide sequences by tandem mass spectrometry.
 
 ## DISCLAIMER
 
@@ -23,6 +23,10 @@ This project is under development and in experimental stage. If you encounter pr
 
   * PointNovo: 
     * Qiao, R., Tran, N.H., Xin, L. et al. Computationally instrument-resolution-independent de novo peptide sequencing for high-resolution devices. Nat Mach Intell 3, 420–425 (2021). https://doi.org/10.1038/s42256-021-00304-3
+  
+  * Casanovo:
+    * Yilmaz, M., Fondrie, W. E., Bittremieux, W., Oh, S. & Noble, W. S. De novo mass spectrometry peptide sequencing with a transformer model. in Proceedings of the 39th International Conference on Machine Learning - ICML '22 vol. 162 25514–25522 (PMLR, 2022). https://proceedings.mlr.press/v162/yilmaz22a.html
+
   * ALPS:
     * Tran, N. H., Rahman, M. Z., He, L., Xin, L., Shan, B., & Li, M. (2016). Complete De Novo Assembly of Monoclonal Antibody Sequences. Scientific reports, 6, 31730. https://doi.org/10.1038/srep31730
 </details>
@@ -90,6 +94,7 @@ using [conda](https://docs.anaconda.com/anaconda/install/) to build virtual envi
 conda env create -n deepnovo -f envs/requirements_deepnovo.yml
 conda env create -n smsnet -f envs/requirements_smsnet.yml
 conda env create -n pointnovo -f envs/requirements_pointnovo.yml
+conda env create -n casanovo -f envs/requirements_casanovo.yml
 conda env create -n denovopipeline -f envs/requirements_denovopipeline.yml
 ```
 
@@ -115,6 +120,10 @@ python src/main.py denovo --input example_dataset/YOURDATA_reformatted_deepnovo.
 
 conda activate pointnovo
 python src/main.py denovo --input example_dataset/YOURDATA_reformatted_deepnovo.mgf --output example_dataset/results --pointnovo 1
+
+
+conda activate casanovo
+python src/main.py denovo --input example_dataset/YOURDATA_reformatted.mgf --output example_dataset/results --casanovo 1
 ```
 
 ### Postprocessing
@@ -124,7 +133,7 @@ You need to specify the directory where all the de novo results are stored and p
 
 ``` 
 conda activate denovopipeline
-python src/main.py summary --input example_dataset/YOURDATA_reformatted.mgf --results example_dataset/results/ --db example_dataset/results/Default\ PSM\ Report\ with\ non-validated\ matches.txt
+python src/main.py summary --input example_dataset/YOURDATA_reformatted.mgf --results example_dataset/results/
 ```
 
 The summary file will be generated in your results directory and include Spectrum Title, Peptide Prediction, Peptide Score, Single Amino Acid score for each tool. Using database results will also generate information about missing cleavages and noise factor in your spectrum. 
@@ -132,10 +141,10 @@ The summary file will be generated in your results directory and include Spectru
 
 ### Assembly results
 
-To finally assembly the sequence, use convertForALPS
+For generating additional stats and assemble peptide predictions to contigs using ALPS:
 
 ```
 conda activate denovopipeline
-python src/main.py convertForALPS --input example_dataset/results/summary.csv
+python src/main.py assembly --input example_dataset/results/summary.csv
 ```
 The command will split up the summary file and generate contigs for each tool in results/ALPS_Assembly. Additionally, it will also generate CSVs with information about the Peptide Recall, AA Recall, AA Precision.
