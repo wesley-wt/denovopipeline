@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
 
+from re import I
 from turtle import color
 import numpy as np
 import pandas as pd
@@ -9,7 +10,7 @@ import logging
 import os 
 
 from pyteomics import mgf, mass
-from config import vocab_reverse_nomods, mass_AA, mass_tol
+from config import vocab_reverse_nomods, mass_AA, match_mass_tol
 
 
 logger = logging.getLogger(__name__)
@@ -121,9 +122,9 @@ def noise_and_fragmentIons(df, mgf_in_path):
                 cleavage_position = []
                 cleavage_position_inlcuding_aions = []
                 for pos, (a_ion, b_ion, y_ion) in enumerate(zip(a_ions, b_ions, reversed(y_ions))):
-                    a_ions_present = [True for i in a_ion if np.isclose(spectrum['m/z array'], i, atol=mass_tol).any()]
-                    b_ions_present = [True for i in b_ion if np.isclose(spectrum['m/z array'], i, atol=mass_tol).any()]
-                    y_ions_present = [True for i in y_ion if np.isclose(spectrum['m/z array'], i, atol=mass_tol).any()]
+                    a_ions_present = [True for i in a_ion if np.isclose(spectrum['m/z array'], i, atol=match_mass_tol).any()]
+                    b_ions_present = [True for i in b_ion if np.isclose(spectrum['m/z array'], i, atol=match_mass_tol).any()]
+                    y_ions_present = [True for i in y_ion if np.isclose(spectrum['m/z array'], i, atol=match_mass_tol).any()]
                     if b_ions_present or y_ions_present:
                         cleavage_position.append(pos+1)
                     else:
@@ -142,8 +143,8 @@ def noise_and_fragmentIons(df, mgf_in_path):
 
                 spectrum_intensity = spectrum['intensity array'] 
                 for pos, (b_ion, y_ion) in enumerate(zip(b_ions, reversed(y_ions))):
-                    b = [np.nonzero(np.isclose(spectrum['m/z array'], i, atol=mass_tol)) for i in b_ion if np.isclose(spectrum['m/z array'], i, atol=mass_tol).any()]
-                    y = [np.nonzero(np.isclose(spectrum['m/z array'], i, atol=mass_tol)) for i in y_ion if np.isclose(spectrum['m/z array'], i, atol=mass_tol).any()]
+                    b = [np.nonzero(np.isclose(spectrum['m/z array'], i, atol=match_mass_tol)) for i in b_ion if np.isclose(spectrum['m/z array'], i, atol=match_mass_tol).any()]
+                    y = [np.nonzero(np.isclose(spectrum['m/z array'], i, atol=match_mass_tol)) for i in y_ion if np.isclose(spectrum['m/z array'], i, atol=match_mass_tol).any()]
                     for elem in b:
                         spectrum_intensity[elem] = np.nan
                     for elem in y:
@@ -188,8 +189,8 @@ def noise_factor(df, mgf_in_path, median_noise):
                 a_ions, b_ions, y_ions = fragments(peptide)
                 spectrum_intensity = spectrum['intensity array'] 
                 for pos, (b_ion, y_ion) in enumerate(zip(b_ions, reversed(y_ions))):
-                    b = [np.nonzero(np.isclose(spectrum['m/z array'], i, atol=mass_tol)) for i in b_ion if np.isclose(spectrum['m/z array'], i, atol=mass_tol).any()]
-                    y = [np.nonzero(np.isclose(spectrum['m/z array'], i, atol=mass_tol)) for i in y_ion if np.isclose(spectrum['m/z array'], i, atol=mass_tol).any()]
+                    b = [np.nonzero(np.isclose(spectrum['m/z array'], i, atol=match_mass_tol)) for i in b_ion if np.isclose(spectrum['m/z array'], i, atol=match_mass_tol).any()]
+                    y = [np.nonzero(np.isclose(spectrum['m/z array'], i, atol=match_mass_tol)) for i in y_ion if np.isclose(spectrum['m/z array'], i, atol=match_mass_tol).any()]
                     for elem in b:
                         spectrum_intensity[elem] = np.nan
                         amount_fragment_peaks += 1
@@ -502,6 +503,42 @@ def process_pnovo(pnovo_path):
         logger.error(f"pNovo3 results not accessible. Make sure they are placed in {pnovo_path}")
         return pd.DataFrame()
 
+def process_casanovo(casanovo_path):
+    """parse de novo results from Casanovo to dataframe
+            :param
+                casanovo_path: path to the mztab file of Casanovo
+            :return
+                pnovo_df: dataframe with Score, Peptide, AAScore of Casanovo
+    """
+    try:
+        with open(casanovo_path) as f:
+            
+            # Identify header
+            for i, line in enumerate(f):
+                if line.startswith("PSH"):
+                    casanovo_header = i 
+                    break
+            
+            casanovo_df = pd.read_csv(casanovo_path, sep="	", header=casanovo_header)
+            casanovo_df = casanovo_df.set_index('PSM_ID')
+            casanovo_df.index += 1 
+            casanovo_peptide = casanovo_df['sequence'].tolist()
+            casanovo_df['Casanovo Peptide'] = [i.replace('M(+15.99)', 'm').replace('Q(+.98)', 'q').replace('N(+.98)', 'n').replace(' ',
+                                        '').replace('C(+57.02)', 'C') for i in casanovo_peptide]
+            # TODO: Calculate Casanovo Score from AA score instead of using search_enginge score 
+            casanovo_df['Casanovo Score'] = casanovo_df['search_engine_score[1]']
+            casanovo_df['Casanovo Score'] = [i * 100 for i in casanovo_df['Casanovo Score'].tolist()]
+            casanovo_aascore = casanovo_df['opt_ms_run[1]_aa_scores'].tolist()
+            casanovo_aascore= [i.replace(',', ' ') for i in casanovo_aascore]
+            casanovo_aascore = [i.split() for i in casanovo_aascore]
+            casanovo_aascore = [[str(float(j) * 100) for j in i] for i in casanovo_aascore]
+            casanovo_df['Casanovo aaScore'] = [" ".join(i) for i in casanovo_aascore]
+            casanovo_df = casanovo_df[['Casanovo Peptide', 'Casanovo Score', 'Casanovo aaScore']]
+            return casanovo_df
+    except IOError:
+        logger.error(f"Casanovo results not accessible. Make sure they are placed in {casanovo_path}")
+        return pd.DataFrame()
+
 
 def access_mgf_file(mgf_path):
     """accesses mgf file to get ID and charge of each scan
@@ -579,11 +616,13 @@ def denovo_summary(mgf_in, resultdir, dbreport):
         # pNovo3
         pnovo_path = resultdir + "pNovo3/result/results.res"
         pnovo_df = process_pnovo(pnovo_path)
+        # Casanovo
+        casanovo_path = resultdir + "Casanovo/casanovo.mztab"
+        casanovo_df = process_casanovo(casanovo_path)
         # input MGF file
         spectrum_name, charge_sp = access_mgf_file(mgf_in_path)
 
-        #tools_list = [novor_df, pepnovo_df, smsnet_df, deepnovo_df, pointnovo_df, pnovo_df]
-        tools_list = [novor_df, smsnet_df, deepnovo_df, pointnovo_df, pnovo_df]
+        tools_list = [novor_df, smsnet_df, deepnovo_df, pointnovo_df, pnovo_df, casanovo_df]
         summary_df = pd.concat(tools_list, axis=1)
         summary_df.insert(0, 'Spectrum Name', spectrum_name)
         summary_df.insert(1, 'Charge', charge_sp)
