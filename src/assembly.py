@@ -252,7 +252,7 @@ def recall_prec_stats(summary_df, resultdir, quality_cutoff):
                 tool_AAprecision.append(str(sum_AAmatches * 100 / length_of_predictedAA))
                 tool_AArecall.append(str(sum_AAmatches * 100 / length_of_realAA))
                 tool_scorecutoff.append(score_cutoff)
-            score_cutoff = score_cutoff - 5
+            score_cutoff = score_cutoff - 1
         tool_AAprecision = [float(i) for i in tool_AAprecision]
         tool_AArecall = [float(i) for i in tool_AArecall]
         tool_accuracy = [float(i) for i in tool_accuracy]
