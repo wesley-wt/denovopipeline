@@ -253,7 +253,7 @@ def process_novor(novor_path):
                                         '').replace('C(3)', 'C').replace('Q(0)','q').replace('M(2)','m') for i in novor_peptide]
             return novor_df
     except IOError:
-        logger.error(f"Novor results not accessible. Make sure they are placed in {novor_path}")
+        logger.warning(f"Novor results not accessible. Make sure they are placed in {novor_path}")
         return pd.DataFrame()
 
 
@@ -295,7 +295,7 @@ def process_pepnovo(pepnovo_path):
             pepnovo_df['PepNovo Score'] = [4 * (float(i) + 10) for i in pepnovo_score]
             return pepnovo_df
     except IOError:
-        logger.error(f"PepNovo results not accessible. Make sure they are placed in {pepnovo_path}")
+        logger.warning(f"PepNovo results not accessible. Make sure they are placed in {pepnovo_path}")
         return pd.DataFrame()
 
 
@@ -345,7 +345,7 @@ def process_smsnet(smsnet_path):
                                            smsnet_aascore]
             return smsnet_df
     except IOError:
-        logger.error(f"SMSNet results not accessible. Make sure they are placed in {smsnet_path}")
+        logger.warning(f"SMSNet results not accessible. Make sure they are placed in {smsnet_path}")
         return pd.DataFrame()
 
 
@@ -410,7 +410,7 @@ def process_deepnovo(deepnovo_path):
 
             return deepnovo_df
     except IOError:
-        logger.error(f"DeepNovo results not accessible. Make sure they are placed in {deepnovo_path}")
+        logger.warning(f"DeepNovo results not accessible. Make sure they are placed in {deepnovo_path}")
         return pd.DataFrame()
 
 
@@ -451,7 +451,7 @@ def process_pointnovo(pointnovo_path):
             pointnovo_df['PointNovo aaScore'] = [" ".join(i) for i in pointnovo_aascore]
             return pointnovo_df
     except IOError:
-        logger.error(f"PointNovo results not accessible. Make sure they are placed in {pointnovo_path}")
+        logger.warning(f"PointNovo results not accessible. Make sure they are placed in {pointnovo_path}")
         return pd.DataFrame()
 
 
@@ -500,7 +500,7 @@ def process_pnovo(pnovo_path):
             pnovo_df['pNovo aaScore'] = [str(i).replace(',', ' ') for i in pnovo_aascore]
             return pnovo_df
     except IOError:
-        logger.error(f"pNovo3 results not accessible. Make sure they are placed in {pnovo_path}")
+        logger.warning(f"pNovo3 results not accessible. Make sure they are placed in {pnovo_path}")
         return pd.DataFrame()
 
 def process_casanovo(casanovo_path):
@@ -535,7 +535,7 @@ def process_casanovo(casanovo_path):
             casanovo_df = casanovo_df[['Casanovo Peptide', 'Casanovo Score', 'Casanovo aaScore']]
             return casanovo_df
     except IOError:
-        logger.error(f"Casanovo results not accessible. Make sure they are placed in {casanovo_path}")
+        logger.warning(f"Casanovo results not accessible. Make sure they are placed in {casanovo_path}")
         return pd.DataFrame()
 
 
