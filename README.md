@@ -2,9 +2,8 @@
 
 denovopipeline uses multiple de novo sequencing algorithms ([pNovo3](http://pfind.ict.ac.cn/software/pNovo/index.html), [SMSNet](https://github.com/cmb-chula/SMSNet/tree/master#readme), [Novor](https://github.com/compomics/denovogui), [DeepNovo](https://github.com/nh2tran/DeepNovo), [PointNovo](https://github.com/volpato30/PointNovo), [Casanovo](https://github.com/Noble-Lab/casanovo), [ALPS](https://github.com/nh2tran/DeepNovo/blob/PNAS/Antibody/ALPS.jar)) for identification and assembly of peptide sequences by tandem mass spectrometry.
 
-## DISCLAIMER
-
-This project is under development and in experimental stage. If you encounter problems, don't hesitate to drop me an E-Mail or open an issue yourself.
+denovopipeline was used to evaluate multiple de novo sequencing algorithms on monoclonal antibody data:
+Denis Beslic, Georg Tscheuschner, Bernhard Y Renard, Michael G Weller, Thilo Muth, Comprehensive evaluation of peptide de novo sequencing tools for monoclonal antibody assembly, Briefings in Bioinformatics, 2022;, bbac542, https://doi.org/10.1093/bib/bbac542
 
 
 <details><summary>Click here for all citations </summary>
