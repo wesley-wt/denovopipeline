@@ -92,7 +92,7 @@ def setup(test_argv=None):
     )
     denovosequencing_parser.add_argument(
         "--pointnovo_model",
-        default="train",
+        default="models/PointNovo/train",
         type=str,
         help="Location of Model for PointNovo. Default: train/",
     )
@@ -171,10 +171,12 @@ def setup(test_argv=None):
                 args.deepnovo,
                 args.pnovo3,
                 args.pointnovo,
+                args.casanovo,
                 args.params,
                 args.smsnet_model,
                 args.deepnovo_model,
                 args.pointnovo_model,
+                args.casanovo_model
             )
         sys.exit(0)
     elif args.subparser_name == "summary":

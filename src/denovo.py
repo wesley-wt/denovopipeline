@@ -8,11 +8,13 @@ import logging
 import subprocess
 import shlex
 
-logger = logging.getLogger(__name__) 
+logger = logging.getLogger(__name__)
+
 
 def log_subprocess_output(pipe):
-    for line in iter(pipe.readline, b''): # b'\n'-separated lines
+    for line in iter(pipe.readline, b''):  # b'\n'-separated lines
         logging.info('got line from subprocess: %r', line)
+
 
 def run_denovogui(mgf_in, dir_out, params):
     logger.info("run_denovogui called. Sequencing with Novor started.")
@@ -34,7 +36,7 @@ def run_smsnet(mgf_in, dir_out, smsnet_model):
     cwd = os.getcwd()
     start_time1 = time()
     mgf_in = os.path.abspath(mgf_in)
-    dir_out = os.path.join(os.path.abspath(dir_out),"SMSNet")
+    dir_out = os.path.join(os.path.abspath(dir_out), "SMSNet")
     if not os.path.exists(f"{dir_out}"):
         os.makedirs(f"{dir_out}")
     model = os.path.abspath(smsnet_model)
@@ -123,14 +125,27 @@ def run_pointnovo(mgf_in, dir_out, pointnovo_model):
 
 def run_casanovo(mgf_in, dir_out, casanovo_model):
     start_time1 = time()
-    os.system(f"casanovo --mode=denovo --model={casanovo_model} --peak_path={mgf_in} --config=resources/Casanovo/casanovo_config.yaml --output={dir_out}")
+    os.system(
+        f"casanovo --mode=denovo --model={casanovo_model} --peak_path={mgf_in} --config=resources/Casanovo/casanovo_config.yaml --output={dir_out}")
     casanovo_time = time() - start_time1
     minute = int(casanovo_time // 60)
     sec = round(casanovo_time - minute * 60, 1)
     logger.info(f"Sequencing with Casanovo finished. Total time: {minute} minutes and {sec} seconds.")
 
-def denovo_seq(mgf_in, resultdir, denovogui, smsnet, deepnovo, pnovo3, pointnovo, casanovo, params, smsnet_model, deepnovo_model,
-               pointnovo_model, casanovo_model):
+
+def denovo_seq(mgf_in,
+               resultdir,
+               denovogui,
+               smsnet,
+               deepnovo,
+               pnovo3,
+               pointnovo,
+               casanovo,
+               params,
+               smsnet_model,
+               deepnovo_model,
+               pointnovo_model,
+               casanovo_model):
     logger.info("Function denovo_seq was called.")
 
     if denovogui == 1:

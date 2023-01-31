@@ -96,7 +96,11 @@ conda env create -n pointnovo -f envs/requirements_pointnovo.yml
 conda env create -n casanovo -f envs/requirements_casanovo.yml
 conda env create -n denovopipeline -f envs/requirements_denovopipeline.yml
 ```
+There is an issue with the installation of PyTorch. So I used the conda install command from PyTorch.org instead
 
+```
+conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
+```
 ### Run de novo sequencing tools
 
 Novor will be executed by using DeNovoCLI from DeNovoGUI. It is necessary to provide a parameter file. We recommend using the [instructions from DeNovoCLI](https://github.com/compomics/denovogui/wiki/IdentificationParametersCLI).

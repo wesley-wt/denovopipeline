@@ -22,31 +22,40 @@ def parse_raw_sequence(raw_sequence: str):
     peptide = []
     index = 0
     while index < raw_sequence_len:
-        if raw_sequence[index] == "(":
-            if peptide[-1] == "C" and raw_sequence[index:index + 8] == "(+57.02)":
+        if raw_sequence[index] == "(" or raw_sequence[index] == "+":
+            if peptide[-1] == "C" and raw_sequence[index:index + 8] == "(+57.02)" or raw_sequence[
+                                                                                     index:index + 7] == "+57.021":
                 peptide[-1] = "C(Carbamidomethylation)"
                 index += 8
-            elif peptide[-1] == 'M' and raw_sequence[index:index + 8] == "(+15.99)":
+            elif peptide[-1] == 'M' and raw_sequence[index:index + 8] == "(+15.99)" or raw_sequence[
+                                                                                       index:index + 7] == "+15.995":
                 peptide[-1] = 'M(Oxidation)'
                 index += 8
-            elif peptide[-1] == 'N' and raw_sequence[index:index + 6] == "(+.98)":
+            elif peptide[-1] == 'N' and raw_sequence[index:index + 6] == "(+.98)" or raw_sequence[
+                                                                                     index:index + 6] == "+0.984":
                 peptide[-1] = 'N(Deamidation)'
                 index += 6
-            elif peptide[-1] == 'Q' and raw_sequence[index:index + 6] == "(+.98)":
+            elif peptide[-1] == 'Q' and raw_sequence[index:index + 6] == "(+.98)" or raw_sequence[
+                                                                                     index:index + 6] == "+0.984":
                 peptide[-1] = 'Q(Deamidation)'
                 index += 6
-            elif peptide[-1] == 'S' and raw_sequence[index:index + 8] == "(+79.97)":
+            elif peptide[-1] == 'S' and raw_sequence[index:index + 8] == "(+79.97)" or raw_sequence[
+                                                                                       index:index + 7] == "+79.966":
                 peptide[-1] = "S(Phosphorylation)"
                 index += 8
-            elif peptide[-1] == 'T' and raw_sequence[index:index + 8] == "(+79.97)":
+            elif peptide[-1] == 'T' and raw_sequence[index:index + 8] == "(+79.97)" or raw_sequence[
+                                                                                       index:index + 7] == "+79.966":
                 peptide[-1] = "T(Phosphorylation)"
                 index += 8
-            elif peptide[-1] == 'Y' and raw_sequence[index:index + 8] == "(+79.97)":
+            elif peptide[-1] == 'Y' and raw_sequence[index:index + 8] == "(+79.97)" or raw_sequence[
+                                                                                       index:index + 7] == "+79.966":
                 peptide[-1] = "Y(Phosphorylation)"
                 index += 8
             else:  # unknown modification
                 logger.warning(f"unknown modification in seq {raw_sequence}")
                 return False, peptide
+
+
         else:
             peptide.append(raw_sequence[index])
             index += 1
@@ -229,7 +238,7 @@ class DeepNovoTrainDataset(BaseDataset):
         self.input_spectrum_handle.seek(spectrum_location)
         # parse header lines
         line = self.input_spectrum_handle.readline()
-        #print(str(feature)+"\n"+ str(spectrum_location) +"\n"+str(line)+"\n"+ str(self))
+        # print(str(feature)+"\n"+ str(spectrum_location) +"\n"+str(line)+"\n"+ str(self))
         assert "BEGIN IONS" in line, "Error: wrong input BEGIN IONS"
         line = self.input_spectrum_handle.readline()
         assert "TITLE=" in line, "Error: wrong input TITLE="
@@ -295,11 +304,11 @@ def collate_func(train_data_list):
     assert ion_index_shape == (config.vocab_size, config.num_ion)
 
     peak_location = [x.peak_location for x in train_data_list]
-    peak_location = np.stack(peak_location) # [batch_size, N]
+    peak_location = np.stack(peak_location)  # [batch_size, N]
     peak_location = torch.from_numpy(peak_location)
 
     peak_intensity = [x.peak_intensity for x in train_data_list]
-    peak_intensity = np.stack(peak_intensity) # [batch_size, N]
+    peak_intensity = np.stack(peak_intensity)  # [batch_size, N]
     peak_intensity = torch.from_numpy(peak_intensity)
 
     spectrum_representation = [x.spectrum_representation for x in train_data_list]
@@ -311,7 +320,7 @@ def collate_func(train_data_list):
     batch_forward_id_input = []
     for data in train_data_list:
         ion_index = np.zeros((batch_max_seq_len, ion_index_shape[0], ion_index_shape[1]),
-                               np.float32)
+                             np.float32)
         forward_ion_index = np.stack(data.forward_ion_location_index_list)
         ion_index[:forward_ion_index.shape[0], :, :] = forward_ion_index
         batch_forward_ion_index.append(ion_index)
@@ -325,8 +334,6 @@ def collate_func(train_data_list):
         forward_input = np.array(data.forward_id_input, np.int64)
         f_input[:forward_input.shape[0]] = forward_input
         batch_forward_id_input.append(f_input)
-
-
 
     batch_forward_id_target = torch.from_numpy(np.stack(batch_forward_id_target))  # [batch_size, T]
     batch_forward_ion_index = torch.from_numpy(np.stack(batch_forward_ion_index))  # [batch, T, 26, 8]
@@ -492,7 +499,8 @@ class DBSearchDataset(BaseDataset):
             return None
 
         if len(candidate_list) > config.normalizing_std_n:
-            quick_scores = [self.quick_scorer(feature.mass, peak_location, peak_intensity, pc.seq) for pc in candidate_list]
+            quick_scores = [self.quick_scorer(feature.mass, peak_location, peak_intensity, pc.seq) for pc in
+                            candidate_list]
             quick_scores = np.array(quick_scores)
             top_k_ind = np.argpartition(quick_scores, -config.normalizing_std_n)[-config.normalizing_std_n:]
 
@@ -582,15 +590,14 @@ class DBSearchDataset(BaseDataset):
         batch_backward_id_target = np.stack(batch_backward_id_target)
         batch_backward_ion_index = np.stack(batch_backward_ion_index)
 
-
         ppm_arr = np.array(ppm_arr, dtype=np.float32)
         num_var_mod_arr = np.array(num_var_mod_arr, dtype=np.float32)
 
         duration = time.time() - start_time
         logger.debug(f"a feature takes {duration} seconds to process.")
         return DBSearchData(peak_location, peak_intensity, batch_forward_id_target, batch_backward_id_target,
-            batch_forward_ion_index, batch_backward_ion_index, ppm_arr,
-            num_var_mod_arr, charge_arr, precursor_mass, candidate_list, feature)
+                            batch_forward_ion_index, batch_backward_ion_index, ppm_arr,
+                            num_var_mod_arr, charge_arr, precursor_mass, candidate_list, feature)
 
     @staticmethod
     def get_fragment_ion_location(precursor_neutral_mass, prefix_mass):
@@ -647,6 +654,7 @@ class DBSearchDataset(BaseDataset):
 
             # diff matrix
             mz_diff = np.abs(peaks_location - ion_location)  ## [N, 3]
-            score_vec = np.max(np.exp(-np.square(mz_diff*100)), axis=1)  # each observed peak can only be explained by one ion type
+            score_vec = np.max(np.exp(-np.square(mz_diff * 100)),
+                               axis=1)  # each observed peak can only be explained by one ion type
             score += np.sum(score_vec * peaks_intensity)
         return score

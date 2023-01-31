@@ -8,6 +8,7 @@ from __future__ import print_function
 import numpy as np
 import argparse
 from itertools import combinations
+
 # ==============================================================================
 # FLAGS (options) for this app
 # ==============================================================================
@@ -48,9 +49,6 @@ PAD_ID = 0
 GO_ID = 1
 EOS_ID = 2
 assert PAD_ID == 0
-
-
-
 
 vocab_reverse = ['A',
                  'R',
@@ -113,6 +111,7 @@ quick_scorer = "num_matched_ions"
 def _fix_transform(aa: str):
     def trans(peptide: list):
         return [x if x != aa else fix_mod_dict[x] for x in peptide]
+
     return trans
 
 
@@ -150,7 +149,7 @@ def var_mod_peptide_transform(peptide: list):
     position_count = len(position_list)
     num_mod = min(position_count, max_num_mod)
     position_combination_list = []
-    for x in range(1, num_mod+1):
+    for x in range(1, num_mod + 1):
         position_combination_list += combinations(position_list, x)
     # find all ptm peptides
     ptm_peptide_list = []
@@ -258,7 +257,7 @@ print("num_units ", num_units)
 
 dropout_rate = 0.25
 
-batch_size = 16
+batch_size = 4
 num_workers = 6
 print("batch_size ", batch_size)
 
@@ -282,16 +281,16 @@ cleavage_rule = "trypsin"
 num_missed_cleavage = 2
 knapsack_file = "knapsack.npy"
 
-input_spectrum_file_train = "/home/dbeslic/master/DeepLearning_TrainingData/02_NISTmAb/ONLY_NistMab/spectrum.mgf"
-input_feature_file_train = "/home/dbeslic/master/DeepLearning_TrainingData/02_NISTmAb/ONLY_NistMab/features.train.csv"
-input_spectrum_file_valid = "/home/dbeslic/master/DeepLearning_TrainingData/02_NISTmAb/ONLY_NistMab/spectrum.mgf"
-input_feature_file_valid = "/home/dbeslic/master/DeepLearning_TrainingData/02_NISTmAb/ONLY_NistMab/features.valid.csv"
-input_spectrum_file_test = "/home/dbeslic/master/DeepLearning_TrainingData/02_NISTmAb/ONLY_NistMab/spectrum.mgf"
-input_feature_file_test = "/home/dbeslic/master/DeepLearning_TrainingData/02_NISTmAb/ONLY_NistMab/features.test.csv"
+input_spectrum_file_train = "/home/wesley/instadeep/codebase/denovopipeline/resources/PointNovo/ABRF_DDA/spectrums.mgf"
+input_feature_file_train = "/home/wesley/instadeep/codebase/denovopipeline/resources/PointNovo/ABRF_DDA/features.csv.identified.train.nodup"
+input_spectrum_file_valid = "/home/wesley/instadeep/codebase/denovopipeline/resources/PointNovo/ABRF_DDA/spectrums.mgf"
+input_feature_file_valid = "/home/wesley/instadeep/codebase/denovopipeline/resources/PointNovo/ABRF_DDA/features.csv.identified.valid.nodup"
+input_spectrum_file_test = "/home/wesley/instadeep/codebase/denovopipeline/resources/PointNovo/ABRF_DDA/spectrums.mgf"
+input_feature_file_test = "/home/wesley/instadeep/codebase/denovopipeline/resources/PointNovo/ABRF_DDA/features.csv.identified.test.nodup"
 # denovo files
-denovo_input_spectrum_file = "/scratch/beslicd/03-denovo-ABseq/01-rawData/PXD030094_SARS-CoV-2-antibodies/mgfs_reformatted/CR3022_091620_HCD_C_reformatted.mgf"
-denovo_input_feature_file  = "/scratch/beslicd/03-denovo-ABseq/01-rawData/PXD030094_SARS-CoV-2-antibodies/mgfs_reformatted/features.csv"
-denovo_output_file = "/scratch/beslicd/03-denovo-ABseq/02-results/CR3022/C/PointNovo/features.csv.deepnovo_denovo"
+denovo_input_spectrum_file = "/home/wesley/instadeep/codebase/denovopipeline/sample_data/sample_preprocessed_spectra.mgf"
+denovo_input_feature_file  = "/home/wesley/instadeep/codebase/denovopipeline/sample_data/features.csv"
+denovo_output_file = "/home/wesley/instadeep/codebase/denovopipeline/example_dataset/results/PointNovo/features.csv.deepnovo_denovo"
 
 # db search files
 search_db_input_spectrum_file = "Lumos_data/PXD008999/export_0.mgf"

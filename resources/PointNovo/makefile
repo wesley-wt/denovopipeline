@@ -9,7 +9,7 @@ build: clean
 
 .PHONY: train
 train:
-	python main.py --train
+	CUDA_LAUNCH_BLOCKING=1 python main.py --train
 
 .PHONY: valid
 valid:
